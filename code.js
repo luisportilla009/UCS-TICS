@@ -1,0 +1,258 @@
+const IS_TEST = true;
+
+const ALLOWED_EMAILS = [
+  'auxiliar1.oasic@unicatolicadelsur.edu.co',
+  'auxiliar2.oasic@unicatolicadelsur.edu.co',
+  'coord.tic@unicatolicadelsur.edu.co',
+  'asistente.oasic@unicatolicadelsur.edu.co',
+  'sena.tic@unicatolicadelsur.edu.co',
+  ];
+
+function doGet(e) {
+  const email = IS_TEST
+    ? 'auxiliar1.oasic@unicatolicadelsur.edu.co'
+    : Session.getActiveUser().getEmail();
+
+  if(!ALLOWED_EMAILS.includes(email)) {
+    return HtmlService.createHtmlOutput(`<h2>Access denied</h2><p>Your email (${email}) is not authorized to access this form.</p>`);
+  }
+
+  return HtmlService
+    .createHtmlOutputFromFile('index')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .append(`<script> var prefill = ${JSON.stringify(e.parameter)};</script>`);
+}
+
+function submitForm(data) {
+  const formId = data.formId;
+  delete data.formId;
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(formId);
+
+  if(!sheet) {
+    throw new Error(`La hoja con nombre '${formId}' no existe.`);
+  }
+
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  const email = IS_TEST
+    ? 'auxiliar1.oasic@unicatolicadelsur.edu.co'
+    : Session.getActiveUser().getEmail();
+
+  const row = [new Date(), email];
+  switch (formId) {
+    
+    case 'Inventario':
+      inventarioForm(sheet, data, headers, row);
+      break;
+
+    case 'Préstamo':
+      prestamoForm(sheet, data, headers, row);
+      break;
+
+    case 'Devolución':
+      devolucionForm(sheet, data, headers, row);
+      break;
+
+    case 'Soporte':
+      soporteForm(sheet, data, headers, row);
+      break;
+      
+    default:
+      return;
+  }
+
+}
+
+function inventarioForm(sheet, data, headers, row){
+  
+  const placa = data['Placa Inventario (I)'];
+  const placaIndex = headers.indexOf('Placa Inventario (I)');
+  const sheetData = sheet.getDataRange().getValues();
+  
+  let rowIndex = sheetData.findIndex((sheetRow, i) => i > 0 && sheetRow[placaIndex] === placa);
+
+  data.URL = (IS_TEST
+    ? 'https://script.google.com/a/macros/unicatolicadelsur.edu.co/s/AKfycbwO0AZLisAXEwLucGd0MvqsAgwRQicaMy87BlMnM_Wp/dev?'
+    : 'https://script.google.com/a/macros/unicatolicadelsur.edu.co/s/AKfycbwO0AZLisAXEwLucGd0MvqsAgwRQicaMy87BlMnM_Wp?')
+    + data.URL;
+
+  for(let i = 2; i < headers.length - 1; i++) {
+    const key = headers[i];
+    row.push(data[key] || "");
+  }
+
+  if(rowIndex !== -1) {
+    sheet.getRange(rowIndex + 1, 1, 1, row.length).setValues([row]);
+    rowIndex = rowIndex + 1;
+  } else {
+    sheet.appendRow(row);
+    rowIndex = sheet.getLastRow();
+  }
+
+  const urlYeshua = 'http://yeshua.unicatolicadelsur.edu.co:4200/qr.php?code=';
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(urlYeshua + placa)}`;
+
+  const response = UrlFetchApp.fetch(qrUrl);
+  const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
+  const blob = response.getBlob().setName(`QR-${placa}-${timestamp}.png`);
+
+  const folder = DriveApp.getFolderById('19zlkq_wNZ8nKJ5bi5uUaDhgjnuQQg9y0');
+  const file = folder.createFile(blob);
+
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  const fileId = file.getId();
+  const publicUrl = `https://drive.google.com/uc?id=${fileId}`;
+
+  const numColumns = sheet.getLastColumn();
+  sheet.getRange(rowIndex, numColumns).setFormula(`=IMAGE("${publicUrl}";4;150;150)`);
+  sheet.setRowHeight(rowIndex, 150);
+  sheet.setColumnWidth(numColumns, 150);
+
+}
+
+function soporteForm(sheet, data, headers, row){
+   
+  for(let i = 2; i < headers.length; i++) {
+    const key = headers[i];
+    row.push(data[key] || "");
+  }
+
+  sheet.appendRow(row);
+
+}
+
+function prestamoForm(sheet, data, headers, row){
+
+}
+
+function devolucionForm(sheet, data, headers, row){
+
+}
+
+function getDeviceOptions() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Disponibilidad");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const nombreIdx = headers.indexOf("NOMBRE");
+  const tipoIdx = headers.indexOf("TIPO");
+  const disponibleIdx = headers.indexOf("DISPONIBLE");
+
+  const result = {
+    hdmi: [],
+    portatil: [],
+    otro: [],
+  };
+
+  for(let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const nombre = row[nombreIdx];
+    const tipo = row[tipoIdx];
+    const disponible = row[disponibleIdx];
+
+    const option = {
+      value: nombre,
+      disabled: disponible !== true
+    };
+
+    switch (tipo) {
+      case "HDMI":
+        result.hdmi.push(option);
+        break;
+      case "PORTATIL":
+        result.portatil.push(option);
+        break;
+      case "OTRO":
+        result.otro.push(option);
+        break;
+    }
+  }
+
+  return result;
+
+}
+
+function initializePlainTextFormat() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Soporte");
+  const range = sheet.getDataRange();
+  range.setNumberFormat("@STRING@");
+}
+
+function downloadRedirectorPHP() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Inventario');
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  const keyColIndex = headers.indexOf('Placa Inventario (I)');
+  const valueColIndex = headers.indexOf('URL');
+
+  if (keyColIndex === -1 || valueColIndex === -1) {
+    SpreadsheetApp.getUi().alert("No se encontraron las columnas 'Placa Inventario (I)' y 'URL'");
+    return;
+  }
+
+  const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
+
+  let phpContent = `<?php
+
+$map = [\n`;
+
+  data.forEach(row => {
+    const key = row[keyColIndex]?.toString().trim();
+    const value = row[valueColIndex]?.toString().trim();
+    if (key && value) {
+      phpContent += `    '${key}' => '${value}',\n`;
+    }
+  });
+
+  phpContent += `];
+
+$code = $_GET['code'] ?? '';
+$url = $map[$code] ?? 'https://my.link.com/error.html';
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redireccionando...</title>
+  <script>
+    setTimeout(() => {
+      window.location.href = <?= json_encode($url) ?>;
+    }, 100);
+  </script>
+</head>
+<body>
+  <p>Redireccionando...</p>
+</body>
+</html>
+`;
+
+  const blob = Utilities.newBlob(phpContent, 'application/x-httpd-php', 'qr.php');
+
+  // Find or create folder "QR Files"
+  const folderName = 'QR Files';
+  let folder;
+  const folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    folder = folders.next();
+  } else {
+    folder = DriveApp.createFolder(folderName);
+  }
+
+  // Remove existing "qr.php" files in the folder
+  const files = folder.getFilesByName('qr.php');
+  while (files.hasNext()) {
+    files.next().setTrashed(true);
+  }
+
+  // Create the new file in the folder
+  const file = folder.createFile(blob);
+
+  SpreadsheetApp.getUi().alert(`Archivo "qr.php" guardado exitosamente en tu carpeta "${folderName}" en Google Drive.`);
+}
+
+
+
