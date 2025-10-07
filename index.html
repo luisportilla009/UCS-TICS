@@ -273,16 +273,33 @@
       <form id="Inventario" onsubmit="handleSubmit(event)">
 
         <div class="card shadow-sm p-4 mb-4">
-          <label for="i_pi" class="form-label fw-semibold">
+          <label class="form-label fw-semibold">
             Placa inventario<span class="text-danger">*</span>
           </label>
-          <input
-            type="text"
-            id="i_pi"
-            name="Placa Inventario (I)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
+          <div class="row g-3">
+            <div class="col-12 col-sm-4">
+              <select
+                id="i_tdp"
+                name="Tipo de Placa (I)"
+                class="form-select shadow-sm border rounded-3"
+                required
+              >
+                <option value="" disabled selected>Tipo</option>
+                <option value="FUCS">FUCS</option>
+                <option value="TMS">TMS</option>
+              </select>
+            </div>
+            <div class="col-12 col-sm-8">
+              <input
+                type="text"
+                id="i_pi"
+                name="Placa Inventario (I)"
+                class="form-control shadow-sm border rounded-3"
+                placeholder="Número de placa"
+                required
+              >
+            </div>
+          </div>
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
@@ -292,12 +309,30 @@
 
           <div class="d-grid gap-3">
 
-            <input type="radio" class="btn-check" name="Sede (I)" id="i_s_Torobajo" value="Torobajo" required>
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (I)"
+              id="i_s_Torobajo"
+              value="Torobajo"
+              data-toggle-target="#i_u_Torobajo_card"
+              data-toggle-value="Torobajo"
+              required
+              >
             <label class="btn btn-outline-primary text-start w-100" for="i_s_Torobajo">
               Torobajo
             </label>
-          
-            <input type="radio" class="btn-check" name="Sede (I)" id="i_s_Centro" value="Centro" required>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (I)"
+              id="i_s_Centro"
+              value="Centro"
+              data-toggle-target="#i_u_Centro_card"
+              data-toggle-value="Centro"
+              required
+            >
             <label class="btn btn-outline-primary text-start w-100" for="i_s_Centro">
               Centro
             </label>
@@ -305,17 +340,22 @@
           </div>
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="i_u" class="form-label fw-semibold">
+        <div id="i_u_Torobajo_card" data-controlled-by="Sede (I)" class="card shadow-sm p-4 mb-4">
+          <label for="i_u_Torobajo" class="form-label fw-semibold text-primary">
             Ubicación ( Oficina - Aula)<span class="text-danger">*</span>
           </label>
-          <input
-            type="text"
-            id="i_u"
-            name="Ubicación ( Oficina - Aula) (I)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
+          <select id="i_u_Torobajo" name="Ubicación ( Oficina - Aula) (I)" class="form-select shadow-sm border rounded-3" required>
+            <option value="" selected>Selecciona una opción</option>
+          </select>
+        </div>
+
+        <div id="i_u_Centro_card" data-controlled-by="Sede (I)" class="card shadow-sm p-4 mb-4">
+          <label for="i_u_Centro" class="form-label fw-semibold text-primary">
+            Ubicación ( Oficina - Aula)<span class="text-danger">*</span>
+          </label>
+          <select id="i_u_Centro" name="Ubicación ( Oficina - Aula) (I)" class="form-select shadow-sm border rounded-3" required>
+            <option value="" selected>Selecciona una opción</option>
+          </select>
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
@@ -327,6 +367,8 @@
             <option value="Computador Escritorio">Computador Escritorio</option>
             <option value="Todo en Uno">Todo en Uno</option>
             <option value="Portátil">Portátil</option>
+            <option value="Parlante">Parlante</option>
+            <option value="Microfono">Microfono</option>
             <option value="Celular">Celular</option>
             <option value="Cámara">Cámara</option>
             <option value="Impresora">Impresora</option>
@@ -337,75 +379,18 @@
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
-          <label for="i_marca" class="form-label fw-semibold text-primary">
-            Marca<span class="text-danger">*</span>
-          </label>
-          <select id="i_marca" name="Marca (I)" class="form-select shadow-sm border rounded-3" required>
-            <option value="" disabled selected>Selecciona una opción</option>
-            <option value="HP">HP</option>
-            <option value="LENOVO">LENOVO</option>
-            <option value="JANUS">JANUS</option>
-            <option value="ASUS">ASUS</option>
-            <option value="ACER">ACER</option>
-            <option value="EPSON">EPSON</option>
-            <option value="RICOH">RICOH</option>
-            <option value="SAMSUNG">SAMSUNG</option>
-            <option value="LG">LG</option>
-            <option value="OTRO">OTRO</option>
-          </select>
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="i_modelo" class="form-label fw-semibold">
-            Modelo<span class="text-danger">*</span>
+          <label for="i_mym" class="form-label fw-semibold">
+            Marca y Modelo<span class="text-danger">*</span>
           </label>
           <input
             type="text"
-            id="i_modelo"
-            name="Modelo (I)"
+            id="i_mym"
+            name="Marca y Modelo (I)"
             class="form-control shadow-sm border rounded-3"
+            placeholder="Ej: HP Pavilion 15"
             required
           >
         </div>
-
-        <!-- <div class="card shadow-sm p-4 mb-4">
-          <label for="i_p" class="form-label fw-semibold">
-            Procesador
-          </label>
-          <input
-            type="text"
-            id="i_p"
-            name="Procesador (I)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="i_ram" class="form-label fw-semibold">
-            RAM
-          </label>
-          <input
-            type="text"
-            id="i_ram"
-            name="RAM (I)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="i_dd" class="form-label fw-semibold">
-            Disco duro
-          </label>
-          <input
-            type="text"
-            id="i_dd"
-            name="Disco duro (I)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
-        </div> -->
 
         <div class="card shadow-sm p-4 mb-4">
           <label class="form-label fw-semibold">
@@ -418,25 +403,25 @@
               type="radio"
               class="btn-check"
               name="Estado (I)"
-              id="i_e_Operativo"
-              value="Operativo - Asignado"
+              id="i_e_Asignado"
+              value="Asignado"
               data-toggle-target="#i_r_card"
-              data-toggle-value="Operativo - Asignado"
+              data-toggle-value="Asignado"
               required
             >
-            <label class="btn btn-outline-primary text-start w-100" for="i_e_Operativo">
-              Operativo - Asignado
+            <label class="btn btn-outline-primary text-start w-100" for="i_e_Asignado">
+              Asignado
+            </label>
+
+            <input type="radio" class="btn-check" name="Estado (I)" id="i_e_Prestamo" value="Para préstamo" required>
+            <label class="btn btn-outline-primary text-start w-100" for="i_e_Prestamo">
+              Para préstamo
             </label>
           
             <input type="radio" class="btn-check" name="Estado (I)" id="i_e_Pendiente" value="Pendiente Asignación" required>
             <label class="btn btn-outline-primary text-start w-100" for="i_e_Pendiente">
               Pendiente Asignación
             </label>
-          
-            <!-- <input type="radio" class="btn-check" name="Estado (I)" id="i_e_Fallas" value="Con fallas" required>
-            <label class="btn btn-outline-primary text-start w-100" for="i_e_Fallas">
-              Con fallas
-            </label> -->
           
             <input type="radio" class="btn-check" name="Estado (I)" id="i_e_Baja" value="Dado de baja" required>
             <label class="btn btn-outline-primary text-start w-100" for="i_e_Baja">
@@ -1003,32 +988,59 @@
         return params.toString();
       }
 
-      google.script.run.withSuccessHandler(renderOptions).getDeviceOptions();
+      let placeOptionsLoaded = false;
+      let deviceOptionsLoaded = false;
 
-      function renderOptions(data) {
-        populateSelect("p_chdmi", data.hdmi, true);
-        populateSelect("p_cportatil", data.portatil, true);
-        populateSelect("p_cotro", data.otro, true);
-        populateSelect("d_chdmi", data.hdmi, false);
-        populateSelect("d_cportatil", data.portatil, false);
-        populateSelect("d_cotro", data.otro, false);
+      google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
+      google.script.run.withSuccessHandler(renderPlaceOptions).getPlaceOptions();
 
-        applyPrefill();
-        initConditionalVisibility();
+      function renderPlaceOptions(data) {
+        populatePlaceSelect("i_u_Torobajo", data.Torobajo);
+        populatePlaceSelect("i_u_Centro", data.Centro);
+        placeOptionsLoaded = true;
+        checkAllLoaded();
       }
 
-      function populateSelect(selectId, options, isPrestamo) {
+      function renderDeviceOptions(data) {
+        populateDeviceSelect("p_chdmi", data.hdmi, true);
+        populateDeviceSelect("p_cportatil", data.portatil, true);
+        populateDeviceSelect("p_cotro", data.otro, true);
+        populateDeviceSelect("d_chdmi", data.hdmi, false);
+        populateDeviceSelect("d_cportatil", data.portatil, false);
+        populateDeviceSelect("d_cotro", data.otro, false);
+        deviceOptionsLoaded = true;
+        checkAllLoaded();
+      }
+
+      function checkAllLoaded() {
+        if (placeOptionsLoaded && deviceOptionsLoaded) {
+          applyPrefill();
+          initConditionalVisibility();
+        }
+      }
+
+      function populatePlaceSelect(selectId, options) {
         const select = document.getElementById(selectId);
         options.forEach(opt => {
           const option = document.createElement("option");
-          option.value = opt.value;
-          option.textContent = opt.value;
+            option.value = opt.value;
+            option.textContent = opt.value;
+            select.appendChild(option);
+          });
+      }
+      
+      function populateDeviceSelect(selectId, options, isPrestamo) {
+        const select = document.getElementById(selectId);
+        options.forEach(opt => {
+          const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.value;
           if (!opt.disabled && isPrestamo) {
             select.appendChild(option);
           } else if (opt.disabled && !isPrestamo){
             select.appendChild(option);
           }
-        });
+          });
       }
 
     </script>

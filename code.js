@@ -65,17 +65,21 @@ function submitForm(data) {
 }
 
 function inventarioForm(sheet, data, headers, row){
-  
-  const placa = data['Placa Inventario (I)'];
-  const placaIndex = headers.indexOf('Placa Inventario (I)');
+
+  const tipoDePlaca = data['Tipo de Placa (I)'];
+  const placaInventario = data['Placa Inventario (I)'];
+  const placaCompleta = `${tipoDePlaca}-${placaInventario}`;
+  const placaCompletaIndex = headers.indexOf('Placa Completa (I)');
   const sheetData = sheet.getDataRange().getValues();
-  
-  let rowIndex = sheetData.findIndex((sheetRow, i) => i > 0 && sheetRow[placaIndex] === placa);
+
+  let rowIndex = sheetData.findIndex((sheetRow, i) => i > 0 && sheetRow[placaCompletaIndex] === placaCompleta);
 
   data.URL = (IS_TEST
     ? 'https://script.google.com/a/macros/unicatolicadelsur.edu.co/s/AKfycbwO0AZLisAXEwLucGd0MvqsAgwRQicaMy87BlMnM_Wp/dev?'
     : 'https://script.google.com/a/macros/unicatolicadelsur.edu.co/s/AKfycbwO0AZLisAXEwLucGd0MvqsAgwRQicaMy87BlMnM_Wp?')
     + data.URL;
+
+  data['Placa Completa (I)'] = placaCompleta;
 
   for(let i = 2; i < headers.length - 1; i++) {
     const key = headers[i];
@@ -92,11 +96,11 @@ function inventarioForm(sheet, data, headers, row){
 
   const urlYeshua = 'http://yeshua.unicatolicadelsur.edu.co:4200/qr.php?code=';
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(urlYeshua + placa)}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(urlYeshua + placaCompleta)}`;
 
   const response = UrlFetchApp.fetch(qrUrl);
   const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
-  const blob = response.getBlob().setName(`QR-${placa}-${timestamp}.png`);
+  const blob = response.getBlob().setName(`QR-${placaCompleta}-${timestamp}.png`);
 
   const folder = DriveApp.getFolderById('19zlkq_wNZ8nKJ5bi5uUaDhgjnuQQg9y0');
   const file = folder.createFile(blob);
@@ -172,6 +176,36 @@ function getDeviceOptions() {
 
   return result;
 
+}
+
+function getPlaceOptions() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Lugares");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const sedeIdx = headers.indexOf("SEDE");
+  const nombreIdx = headers.indexOf("NOMBRE");
+
+  const result = {
+    Torobajo: [],
+    Centro: [],
+  };
+  
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const nombre = row[nombreIdx];
+    const sede = row[sedeIdx];
+
+    switch(sede){
+      case "Torobajo":
+        result.Torobajo.push({ value: nombre });
+        break;
+      case "Centro":
+        result.Centro.push({ value: nombre });
+        break;
+    }
+  }
+  return result;
 }
 
 function initializePlainTextFormat() {
