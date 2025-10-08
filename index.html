@@ -364,11 +364,12 @@
           </label>
           <select id="i_tdr" name="Tipo de Recurso (I)" class="form-select shadow-sm border rounded-3" required>
             <option value="" disabled selected>Selecciona una opción</option>
+            <option value="Control HDMI">Control HDMI</option>
             <option value="Computador Escritorio">Computador Escritorio</option>
             <option value="Todo en Uno">Todo en Uno</option>
             <option value="Portátil">Portátil</option>
             <option value="Parlante">Parlante</option>
-            <option value="Microfono">Microfono</option>
+            <option value="Micrófono">Micrófono</option>
             <option value="Celular">Celular</option>
             <option value="Cámara">Cámara</option>
             <option value="Impresora">Impresora</option>
@@ -860,6 +861,8 @@
         sections.forEach(sec =>
           sec.classList.toggle('active', sec.id === sectionSelected)
         );
+        // TODO: TEST IF IT WORKS
+        google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
       }
 
       function returnToMenu() {
@@ -940,9 +943,25 @@
           data[key] = value;
         });
 
-        if (form.id === 'Inventario') data.URL = createURLParams(form);
-
         data.formId = form.id;
+
+        if(form.id === 'Inventario') {
+
+          data.URL = createURLParams(form);
+
+          const selectedSede = data['Sede (I)'];
+  
+          // Get the value from the correct select based on the selected sede
+          if (selectedSede === 'Torobajo') {
+            data['Ubicación ( Oficina - Aula) (I)'] = document.getElementById('i_u_Torobajo').value;
+          } else if (selectedSede === 'Centro') {
+            data['Ubicación ( Oficina - Aula) (I)'] = document.getElementById('i_u_Centro').value;
+          }
+          
+          // Remove the individual location fields if they exist with different names
+          delete data['Ubicación ( Oficina - Aula) (I) - Torobajo'];
+          delete data['Ubicación ( Oficina - Aula) (I) - Centro'];
+        }
 
         google.script.run
           .withSuccessHandler(() => {
@@ -1031,6 +1050,11 @@
       
       function populateDeviceSelect(selectId, options, isPrestamo) {
         const select = document.getElementById(selectId);
+
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+
         options.forEach(opt => {
           const option = document.createElement("option");
             option.value = opt.value;

@@ -143,6 +143,7 @@ function getDeviceOptions() {
   const nombreIdx = headers.indexOf("NOMBRE");
   const tipoIdx = headers.indexOf("TIPO");
   const disponibleIdx = headers.indexOf("DISPONIBLE");
+  const activoIdx = headers.indexOf("ACTIVO");
 
   const result = {
     hdmi: [],
@@ -152,6 +153,12 @@ function getDeviceOptions() {
 
   for(let i = 1; i < data.length; i++) {
     const row = data[i];
+    const activo = row[activoIdx];
+
+    if (activo !== true) {
+      continue;
+    }
+
     const nombre = row[nombreIdx];
     const tipo = row[tipoIdx];
     const disponible = row[disponibleIdx];
