@@ -94,6 +94,61 @@ function inventarioForm(sheet, data, headers, row){
     rowIndex = sheet.getLastRow();
   }
 
+  // Handle 'Disponibilidad' sheet logic
+  if(data['Estado (I)'] === 'Para préstamo') {
+    const disponibilidadSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Disponibilidad');
+    
+    if(disponibilidadSheet) {
+      const disponibilidadData = disponibilidadSheet.getDataRange().getValues();
+      const disponibilidadHeaders = disponibilidadData[0];
+      const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
+      
+      // Check if placaCompleta exists in 'NOMBRE' column
+      const exists = disponibilidadData.some((dispRow, i) => 
+        i > 0 && dispRow[nombreColumnIndex] === placaCompleta
+      );
+      
+      // If it doesn't exist, create a new row
+      if(!exists) {
+        const tipoColumnIndex = disponibilidadHeaders.indexOf('TIPO');
+        const disponibleColumnIndex = disponibilidadHeaders.indexOf('DISPONIBLE');
+        const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
+        
+        const newRow = new Array(disponibilidadHeaders.length).fill('');
+        newRow[nombreColumnIndex] = placaCompleta;
+        newRow[tipoColumnIndex] = data['Tipo de Recurso (I)'];
+        newRow[disponibleColumnIndex] = true;
+        newRow[activoColumnIndex] = true;
+        
+        disponibilidadSheet.appendRow(newRow);
+      }  else {
+        // If it exists, ensure ACTIVO is TRUE IT DIDN'T WORK
+        const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
+        disponibilidadSheet.getRange(rowIndexDisp + 1, activoColumnIndex + 1).setValue(true);
+      }
+    }
+  } else {
+    // When Estado (I) is NOT 'Para préstamo'
+    const disponibilidadSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Disponibilidad');
+    
+    if(disponibilidadSheet) {
+      const disponibilidadData = disponibilidadSheet.getDataRange().getValues();
+      const disponibilidadHeaders = disponibilidadData[0];
+      const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
+      const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
+      
+      // Find the row with placaCompleta in 'NOMBRE' column
+      const rowIndexDisp = disponibilidadData.findIndex((dispRow, i) => 
+        i > 0 && dispRow[nombreColumnIndex] === placaCompleta
+      );
+      
+      // If it exists, set ACTIVO to FALSE
+      if(rowIndexDisp !== -1) {
+        disponibilidadSheet.getRange(rowIndexDisp + 1, activoColumnIndex + 1).setValue(false);
+      }
+    }
+  }
+
   const urlYeshua = 'http://yeshua.unicatolicadelsur.edu.co:4200/qr.php?code=';
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(urlYeshua + placaCompleta)}`;
