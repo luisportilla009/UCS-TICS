@@ -656,47 +656,30 @@
       <form id="Soporte" onsubmit="handleSubmit(event)">
 
         <div class="card shadow-sm p-4 mb-4">
-          <label for="s_nds" class="form-label fw-semibold">
-            Nombre del solicitante<span class="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            id="s_nds"
-            name="Nombre del solicitante (S)"
-            class="form-control shadow-sm border rounded-3"
-            required
-          >
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
           <label class="form-label fw-semibold">
-            Vinculación del solicitante<span class="text-danger">*</span>
+            Placa inventario<span class="text-danger">*</span>
           </label>
-
-          <div class="d-grid gap-3">
-
-            <input type="radio" class="btn-check" name="Vinculación del solicitante (S)" id="s_vds_Administrativo" value="Administrativo" required>
-            <label class="btn btn-outline-primary text-start w-100" for="s_vds_Administrativo">
-              Administrativo
-            </label>
-          
-          
-            <input type="radio" class="btn-check" name="Vinculación del solicitante (S)" id="s_vds_Profesor" value="Profesor" required>
-            <label class="btn btn-outline-primary text-start w-100" for="s_vds_Profesor">
-              Profesor
-            </label>
-          
-          
-            <input type="radio" class="btn-check" name="Vinculación del solicitante (S)" id="s_vds_Estudiante" value="Estudiante" required>
-            <label class="btn btn-outline-primary text-start w-100" for="s_vds_Estudiante">
-              Estudiante
-            </label>
-          
-          
-            <input type="radio" class="btn-check" name="Vinculación del solicitante (S)" id="s_vds_Otro" value="Otro" required>
-            <label class="btn btn-outline-primary text-start w-100" for="s_vds_Otro">
-              Otro
-            </label>
+          <div class="row g-3">
+            <div class="col-12 col-sm-4">
+              <select
+                id="s_tdp"
+                name="Tipo de Placa (S)"
+                class="form-select shadow-sm border rounded-3"
+                required
+              >
+                <option value="" disabled selected>Tipo</option>
+                <option value="FUCS" data-toggle-target="#s_pi_FUCS_select" data-toggle-value="FUCS">FUCS</option>
+                <option value="TMS" data-toggle-target="#s_pi_TMS_select" data-toggle-value="TMS">TMS</option>
+              </select>
+            </div>
+            <div class="col-12 col-sm-8">
+              <select id="s_pi_FUCS_select" data-controlled-by="s_tdp" name="Placa inventario (S)" class="form-select shadow-sm border rounded-3" required>
+                <option value="" selected>Selecciona una opción</option>
+              </select>
+              <select id="s_pi_TMS_select" data-controlled-by="s_tdp" name="Placa inventario (S)" class="form-select shadow-sm border rounded-3" required>
+                <option value="" selected>Selecciona una opción</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -861,8 +844,24 @@
         sections.forEach(sec =>
           sec.classList.toggle('active', sec.id === sectionSelected)
         );
-        // TODO: TEST IF IT WORKS
-        google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
+
+        switch (sectionSelected) {
+          case 'InventarioSection':
+            google.script.run.withSuccessHandler(renderPlaceOptions).getPlaceOptions();
+            break;
+
+            case 'PréstamoSection':
+            case 'DevoluciónSection':
+              google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
+              break;
+                
+            case 'SoporteSection':
+              google.script.run.withSuccessHandler(renderAllDevicesByTypeOfPlate).getAllDevicesByTypeOfPlate();
+              break;
+
+          default:
+            break;
+        }
       }
 
       function returnToMenu() {
@@ -1009,10 +1008,19 @@
 
       let placeOptionsLoaded = false;
       let deviceOptionsLoaded = false;
+      let allDevicesByTypeOfPlate= false;
 
       google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
       google.script.run.withSuccessHandler(renderPlaceOptions).getPlaceOptions();
+      google.script.run.withSuccessHandler(renderAllDevicesByTypeOfPlate).getAllDevicesByTypeOfPlate();
 
+      function renderAllDevicesByTypeOfPlate(data) {
+        populateAllDevicesByTypeOfPlate("s_pi_FUCS_select", data.FUCS);
+        populateAllDevicesByTypeOfPlate("s_pi_TMS_select", data.TMS);
+        allDevicesByTypeOfPlate = true;
+        checkAllLoaded();
+      }
+      
       function renderPlaceOptions(data) {
         populatePlaceSelect("i_u_Torobajo", data.Torobajo);
         populatePlaceSelect("i_u_Centro", data.Centro);
@@ -1032,13 +1040,24 @@
       }
 
       function checkAllLoaded() {
-        if (placeOptionsLoaded && deviceOptionsLoaded) {
+        if (placeOptionsLoaded && deviceOptionsLoaded && allDevicesByTypeOfPlate) {
           applyPrefill();
           initConditionalVisibility();
         }
       }
 
       function populatePlaceSelect(selectId, options) {
+        const select = document.getElementById(selectId);
+        options.forEach(opt => {
+          const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.value;
+            select.appendChild(option);
+          });
+      }
+      
+      // MAYBE DELETE IT AND USE populatePlaceSelect INSTEAD
+      function populateAllDevicesByTypeOfPlate(selectId, options) {
         const select = document.getElementById(selectId);
         options.forEach(opt => {
           const option = document.createElement("option");

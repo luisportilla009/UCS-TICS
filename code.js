@@ -104,12 +104,12 @@ function inventarioForm(sheet, data, headers, row){
       const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
       
       // Check if placaCompleta exists in 'NOMBRE' column
-      const exists = disponibilidadData.some((dispRow, i) => 
+      const exists = disponibilidadData.findIndex((dispRow, i) => 
         i > 0 && dispRow[nombreColumnIndex] === placaCompleta
       );
       
       // If it doesn't exist, create a new row
-      if(!exists) {
+      if(exists === -1) {
         const tipoColumnIndex = disponibilidadHeaders.indexOf('TIPO');
         const disponibleColumnIndex = disponibilidadHeaders.indexOf('DISPONIBLE');
         const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
@@ -124,7 +124,7 @@ function inventarioForm(sheet, data, headers, row){
       }  else {
         // If it exists, ensure ACTIVO is TRUE IT DIDN'T WORK
         const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
-        disponibilidadSheet.getRange(rowIndexDisp + 1, activoColumnIndex + 1).setValue(true);
+        disponibilidadSheet.getRange(exists + 1, activoColumnIndex + 1).setValue(true);
       }
     }
   } else {
@@ -224,13 +224,13 @@ function getDeviceOptions() {
     };
 
     switch (tipo) {
-      case "HDMI":
+      case "Control HDMI":
         result.hdmi.push(option);
         break;
-      case "PORTATIL":
+      case "Portátil":
         result.portatil.push(option);
         break;
-      case "OTRO":
+      default:
         result.otro.push(option);
         break;
     }
@@ -238,6 +238,41 @@ function getDeviceOptions() {
 
   return result;
 
+}
+
+function getAllDevicesByTypeOfPlate() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventario");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  tipoDePlacaIdx = headers.indexOf("Tipo de Placa (I)");
+  placaInventarioIdx = headers.indexOf("Placa Inventario (I)");
+  estadoIdx = headers.indexOf("Estado (I)");
+
+  const result = {
+    FUCS: [],
+    TMS: [],
+  };
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const tipoDePlaca = row[tipoDePlacaIdx];
+    const placaInventario = row[placaInventarioIdx];
+    const estado = row[estadoIdx];
+
+    if (estado === "Dado de baja") {
+      continue; // Skip items that are "Dado de baja",
+    }
+    switch (tipoDePlaca) {
+      case "FUCS":
+        result.FUCS.push({ value: placaInventario });
+        break;
+      case "TMS":
+        result.TMS.push({ value: placaInventario });
+        break;
+    }
+  }
+  return result;
 }
 
 function getPlaceOptions() {
