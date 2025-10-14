@@ -172,7 +172,30 @@ function inventarioForm(sheet, data, headers, row){
 }
 
 function soporteForm(sheet, data, headers, row){
-   
+
+  const tipoDePlaca = data['Tipo de Placa (S)'];
+  const placaInventario = data['Placa Inventario (S)'];
+  const placaCompleta = `${tipoDePlaca}-${placaInventario}`;
+  data['Placa Completa (S)'] = placaCompleta;
+
+  const inventarioSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Inventario');
+
+  if(inventarioSheet) {
+    const inventarioData = inventarioSheet.getDataRange().getValues();
+    const inventarioHeaders = inventarioData[0];
+    const placaCompletaIndex = inventarioHeaders.indexOf('Placa Completa (I)');
+
+    const rowIndexPlacaCompleta = inventarioData.findIndex((invRow, i) => 
+      i > 0 && invRow[placaCompletaIndex] === placaCompleta
+    );
+
+    const solicitante = rowIndexPlacaCompleta !== -1
+      ? inventarioData[rowIndexPlacaCompleta][inventarioHeaders.indexOf('Responsable (I)')]
+      : '';
+
+    data['Solicitante (S)'] = solicitante === '' ? 'TIC' : solicitante;
+  }
+
   for(let i = 2; i < headers.length; i++) {
     const key = headers[i];
     row.push(data[key] || "");
@@ -183,7 +206,24 @@ function soporteForm(sheet, data, headers, row){
 }
 
 function prestamoForm(sheet, data, headers, row){
+  const disponibilidadSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Disponibilidad');
 
+  if(disponibilidadSheet) {
+    cualControlHDMI = data['Cuál control HDMI? (D)'];
+    cualPortatil = data['Cuál portátil? (D)'];
+    cualOtro = data['Cuál otro? (D)'];
+
+    const disponibilidadData = disponibilidadSheet.getDataRange().getValues();
+    const disponibilidadHeaders = disponibilidadData[0];
+    const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
+    //TODO end this
+  }
+
+  for(let i = 2; i < headers.length; i++) {
+    const key = headers[i];
+    row.push(data[key] || "");
+  }
+  sheet.appendRow(row);
 }
 
 function devolucionForm(sheet, data, headers, row){

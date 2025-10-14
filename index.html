@@ -257,12 +257,12 @@
       <!-- MENUSECTION -->
       <div class="section active container" id="MenuSection">
         <div class="d-grid gap-3">
-          <button class="btn btn-primary" onclick="goToSection('InventarioSection')">Inventario</button>
-          <button class="btn btn-primary" onclick="goToSection('PréstamoSection')">Préstamo</button>
-          <button class="btn btn-primary" onclick="goToSection('DevoluciónSection')">Devolución</button>
-          <button class="btn btn-primary" onclick="goToSection('SoporteSection')">Soporte</button>
-          <button class="btn btn-primary" onclick="goToSection('BajaDeActivosSection')">Baja de activos</button>
-          <button class="btn btn-primary" onclick="goToSection('InformaciónSection')">Información</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('InventarioSection')">Inventario</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('PréstamoSection')">Préstamo</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('DevoluciónSection')">Devolución</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('SoporteSection')">Soporte</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('BajaDeActivosSection')">Baja de activos</button>
+          <button type="button" class="btn btn-primary" onclick="goToSection('InformaciónSection')">Información</button>
         </div>
       </div>
     </div>
@@ -496,26 +496,26 @@
 
         <div class="card shadow-sm p-4 mb-4">
           <label class="form-label fw-semibold">
-            Nombre del solicitante<span class="text-danger">*</span>
+            Tipo de solicitante<span class="text-danger">*</span>
           </label>
           <div class="d-grid gap-3">
 
-            <input type="radio" class="btn-check" name="Nombre del solicitante (P)" id="p_vds_Administrativo" value="Administrativo" required>
+            <input type="radio" class="btn-check" name="Tipo de solicitante (P)" id="p_vds_Administrativo" value="Administrativo" required>
             <label class="btn btn-outline-primary text-start w-100" for="p_vds_Administrativo">
               Administrativo
             </label>
 
-            <input type="radio" class="btn-check" name="Nombre del solicitante (P)" id="p_vds_Profesor" value="Profesor" required>
+            <input type="radio" class="btn-check" name="Tipo de solicitante (P)" id="p_vds_Profesor" value="Profesor" required>
             <label class="btn btn-outline-primary text-start w-100" for="p_vds_Profesor">
               Profesor
             </label>
 
-            <input type="radio" class="btn-check" name="Nombre del solicitante (P)" id="p_vds_Estudiante" value="Estudiante" required>
+            <input type="radio" class="btn-check" name="Tipo de solicitante (P)" id="p_vds_Estudiante" value="Estudiante" required>
             <label class="btn btn-outline-primary text-start w-100" for="p_vds_Estudiante">
               Estudiante
             </label>
 
-            <input type="radio" class="btn-check" name="Nombre del solicitante (P)" id="p_vds_Otro" value="Otro" required>
+            <input type="radio" class="btn-check" name="Tipo de solicitante (P)" id="p_vds_Otro" value="Otro" required>
             <label class="btn btn-outline-primary text-start w-100" for="p_vds_Otro">
               Otro
             </label>
@@ -525,9 +525,9 @@
 
         <div class="card shadow-sm p-4 mb-4">
           <label for="p_chdmi" class="form-label fw-semibold text-primary">
-            Cuál HDMI?
+            Cuál control HDMI?
           </label>
-          <select id="p_chdmi" name="Cuál HDMI? (P)" class="form-select shadow-sm border rounded-3">
+          <select id="p_chdmi" name="Cuál control HDMI? (P)" class="form-select shadow-sm border rounded-3">
             <option value="" selected>Selecciona una opción</option>
           </select>
         </div>
@@ -582,9 +582,9 @@
 
         <div class="card shadow-sm p-4 mb-4">
           <label for="d_chdmi" class="form-label fw-semibold text-primary">
-            Cuál HDMI?
+            Cuál control HDMI?
           </label>
-          <select id="d_chdmi" name="Cuál HDMI? (D)" class="form-select shadow-sm border rounded-3">
+          <select id="d_chdmi" name="Cuál control HDMI? (D)" class="form-select shadow-sm border rounded-3">
             <option value="" selected>Selecciona una opción</option>
           </select>
         </div>
@@ -660,25 +660,47 @@
             Placa inventario<span class="text-danger">*</span>
           </label>
           <div class="row g-3">
-            <div class="col-12 col-sm-4">
-              <select
-                id="s_tdp"
+            <div class="col-12 col-sm-6">
+
+              <input
+                type="radio"
+                class="btn-check"
                 name="Tipo de Placa (S)"
-                class="form-select shadow-sm border rounded-3"
+                id="s_tdp_FUCS"
+                value="FUCS"
+                data-toggle-target="#s_pi_FUCS_card"
+                data-toggle-value="FUCS"
+                required
+                >
+              <label class="btn btn-outline-primary text-start w-100" for="s_tdp_FUCS">
+                FUCS
+              </label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="Tipo de Placa (S)"
+                id="s_tdp_TMS"
+                value="TMS"
+                data-toggle-target="#s_pi_TMS_card"
+                data-toggle-value="TMS"
                 required
               >
-                <option value="" disabled selected>Tipo</option>
-                <option value="FUCS" data-toggle-target="#s_pi_FUCS_select" data-toggle-value="FUCS">FUCS</option>
-                <option value="TMS" data-toggle-target="#s_pi_TMS_select" data-toggle-value="TMS">TMS</option>
-              </select>
+              <label class="btn btn-outline-primary text-start w-100" for="s_tdp_TMS">
+                TMS
+              </label>
             </div>
-            <div class="col-12 col-sm-8">
-              <select id="s_pi_FUCS_select" data-controlled-by="s_tdp" name="Placa inventario (S)" class="form-select shadow-sm border rounded-3" required>
-                <option value="" selected>Selecciona una opción</option>
-              </select>
-              <select id="s_pi_TMS_select" data-controlled-by="s_tdp" name="Placa inventario (S)" class="form-select shadow-sm border rounded-3" required>
-                <option value="" selected>Selecciona una opción</option>
-              </select>
+            <div class="col-12 col-sm-6">
+              <div id="s_pi_FUCS_card" data-controlled-by="s_tdp_FUCS">
+                <select id="s_pi_FUCS_select" name="Placa Inventario (S)" class="form-select shadow-sm border rounded-3" required>
+                  <option value="" selected>Selecciona una opción</option>
+                </select>
+              </div>
+              <div id="s_pi_TMS_card" data-controlled-by="s_tdp_TMS">
+                <select id="s_pi_TMS_select" name="Placa Inventario (S)" class="form-select shadow-sm border rounded-3" required>
+                  <option value="" selected>Selecciona una opción</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -956,10 +978,18 @@
           } else if (selectedSede === 'Centro') {
             data['Ubicación ( Oficina - Aula) (I)'] = document.getElementById('i_u_Centro').value;
           }
-          
-          // Remove the individual location fields if they exist with different names
-          delete data['Ubicación ( Oficina - Aula) (I) - Torobajo'];
-          delete data['Ubicación ( Oficina - Aula) (I) - Centro'];
+        }
+
+        if(form.id === 'Soporte') {
+
+          const selectedPlaca = data['Tipo de Placa (S)'];
+  
+          // Get the value from the correct select based on the selected sede
+          if (selectedPlaca === 'FUCS') {
+            data['Placa Inventario (S)'] = document.getElementById('s_pi_FUCS_select').value;
+          } else if (selectedPlaca === 'TMS') {
+            data['Placa Inventario (S)'] = document.getElementById('s_pi_TMS_select').value;
+          }
         }
 
         google.script.run
@@ -1048,6 +1078,11 @@
 
       function populatePlaceSelect(selectId, options) {
         const select = document.getElementById(selectId);
+
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+
         options.forEach(opt => {
           const option = document.createElement("option");
             option.value = opt.value;
@@ -1059,6 +1094,11 @@
       // MAYBE DELETE IT AND USE populatePlaceSelect INSTEAD
       function populateAllDevicesByTypeOfPlate(selectId, options) {
         const select = document.getElementById(selectId);
+
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+        
         options.forEach(opt => {
           const option = document.createElement("option");
             option.value = opt.value;
@@ -1070,8 +1110,14 @@
       function populateDeviceSelect(selectId, options, isPrestamo) {
         const select = document.getElementById(selectId);
 
-        while (select.options.length > 1) {
-          select.remove(1);
+        if (["p_cotro", "d_cotro"].includes(selectId)) {
+          while (select.options.length > 0) {
+            select.remove(0);
+          }
+        } else {
+          while (select.options.length > 1) {
+            select.remove(1);
+          }
         }
 
         options.forEach(opt => {
