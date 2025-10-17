@@ -27,6 +27,15 @@ function submitForm(data) {
   const formId = data.formId;
   delete data.formId;
 
+  const email = IS_TEST
+    ? 'auxiliar1.oasic@unicatolicadelsur.edu.co'
+    : Session.getActiveUser().getEmail();
+    
+  if(formId === 'Devolución') {
+    devolucionForm(data, email);
+    return;
+  }
+
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(formId);
 
   if(!sheet) {
@@ -35,9 +44,6 @@ function submitForm(data) {
 
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-  const email = IS_TEST
-    ? 'auxiliar1.oasic@unicatolicadelsur.edu.co'
-    : Session.getActiveUser().getEmail();
 
   const row = [new Date(), email];
   switch (formId) {
@@ -48,10 +54,6 @@ function submitForm(data) {
 
     case 'Préstamo':
       prestamoForm(sheet, data, headers, row);
-      break;
-
-    case 'Devolución':
-      devolucionForm(sheet, data, headers, row);
       break;
 
     case 'Soporte':
@@ -113,18 +115,21 @@ function inventarioForm(sheet, data, headers, row){
         const tipoColumnIndex = disponibilidadHeaders.indexOf('TIPO');
         const disponibleColumnIndex = disponibilidadHeaders.indexOf('DISPONIBLE');
         const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
+        const sedeColumnIndex = disponibilidadHeaders.indexOf('SEDE');
         
         const newRow = new Array(disponibilidadHeaders.length).fill('');
         newRow[nombreColumnIndex] = placaCompleta;
         newRow[tipoColumnIndex] = data['Tipo de Recurso (I)'];
         newRow[disponibleColumnIndex] = true;
         newRow[activoColumnIndex] = true;
+        newRow[sedeColumnIndex] = data['Sede (I)'];
         
         disponibilidadSheet.appendRow(newRow);
       }  else {
         // If it exists, ensure ACTIVO is TRUE IT DIDN'T WORK
         const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
         disponibilidadSheet.getRange(exists + 1, activoColumnIndex + 1).setValue(true);
+        disponibilidadSheet.getRange(exists + 1, sedeColumnIndex + 1).setValue(data['Sede (I)']);
       }
     }
   } else {
@@ -136,6 +141,7 @@ function inventarioForm(sheet, data, headers, row){
       const disponibilidadHeaders = disponibilidadData[0];
       const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
       const activoColumnIndex = disponibilidadHeaders.indexOf('ACTIVO');
+      const sedeColumnIndex = disponibilidadHeaders.indexOf('SEDE');
       
       // Find the row with placaCompleta in 'NOMBRE' column
       const rowIndexDisp = disponibilidadData.findIndex((dispRow, i) => 
@@ -145,6 +151,7 @@ function inventarioForm(sheet, data, headers, row){
       // If it exists, set ACTIVO to FALSE
       if(rowIndexDisp !== -1) {
         disponibilidadSheet.getRange(rowIndexDisp + 1, activoColumnIndex + 1).setValue(false);
+        disponibilidadSheet.getRange(rowIndexDisp + 1, sedeColumnIndex + 1).setValue(data['Sede (I)']);
       }
     }
   }
@@ -209,25 +216,141 @@ function prestamoForm(sheet, data, headers, row){
   const disponibilidadSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Disponibilidad');
 
   if(disponibilidadSheet) {
-    cualControlHDMI = data['Cuál control HDMI? (D)'];
-    cualPortatil = data['Cuál portátil? (D)'];
-    cualOtro = data['Cuál otro? (D)'];
+    cualControlHDMI = (data['Cuál control HDMI? (P)'] === '' || data['Cuál control HDMI? (P)'] === null || data['Cuál control HDMI? (P)'] === undefined) ? [] : data['Cuál control HDMI? (P)'].split(',');
+    cualPortatil = (data['Cuál portátil? (P)'] === '' || data['Cuál portátil? (P)'] === null || data['Cuál portátil? (P)'] === undefined) ? [] : data['Cuál portátil? (P)'].split(',');
+    cualOtro = (data['Cuál otro? (P)'] === '' || data['Cuál otro? (P)'] === null || data['Cuál otro? (P)'] === undefined) ? [] : data['Cuál otro? (P)'].split(',');
+    array = [...cualControlHDMI, ...cualPortatil, ...cualOtro];
 
     const disponibilidadData = disponibilidadSheet.getDataRange().getValues();
     const disponibilidadHeaders = disponibilidadData[0];
     const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
-    //TODO end this
+    const disponibleColumnIndex = disponibilidadHeaders.indexOf('DISPONIBLE');
+
+    array.forEach((item) => {
+      if (!item || (typeof item === 'string' && item.trim() === '')) return;
+      
+      // Convert both to strings for comparison to handle type mismatches
+      const itemStr = String(item).trim();
+      const rowIndex = disponibilidadData.findIndex((row) => String(row[nombreColumnIndex]).trim() === itemStr);
+      disponibilidadSheet.getRange(rowIndex + 1, disponibleColumnIndex + 1).setValue(false);
+    });
   }
 
   for(let i = 2; i < headers.length; i++) {
     const key = headers[i];
     row.push(data[key] || "");
   }
+  
+  devueltoIndex = headers.indexOf('DEVUELTO');
+  row[devueltoIndex] = false;
+
   sheet.appendRow(row);
 }
 
-function devolucionForm(sheet, data, headers, row){
+function devolucionForm(data, email) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheetP = ss.getSheetByName('Préstamo');
+  const sheetPData = sheetP.getDataRange().getValues();
+  const headersP = sheetPData[0];
+  
+  // Find column indices once
+  const solicitanteIdx = headersP.indexOf('Nombre del solicitante (P)');
+  const devueltoIdx = headersP.indexOf('DEVUELTO');
+  const emailDevolucionIdx = headersP.indexOf('Email Devolución');
+  const fechaDevolucionIdx = headersP.indexOf('Fecha de devolución (D)');
+  const estadoDevolucionIdx = headersP.indexOf('Estado de la devolución (D)');
+  const causaProblemaIdx = headersP.indexOf('Causa del problema o no funcionamiento? (D)');
+  const cualControlHDMIIdx = headersP.indexOf('Cuál control HDMI? (P)');
+  const cualPortatilIdx = headersP.indexOf('Cuál portátil? (P)');
+  const cualOtroIdx = headersP.indexOf('Cuál otro? (P)');
+  
+  // Find the row index starting from the bottom for efficiency and in case of Nombre del solicitante duplicates
+  let rowIndex = -1;
+  for (let i = sheetPData.length - 1; i >= 0; i--) {
+    if (sheetPData[i][solicitanteIdx] === data['Nombre del solicitante (D)']) {
+      rowIndex = i;
+      break;
+    }
+  }
 
+  
+  if (rowIndex === -1) {
+    throw new Error(`No se encontró el solicitante '${data['Nombre del solicitante (D)']}' en la hoja 'Préstamo'.`);
+  }
+  
+  // Batch update - set all values at once using setValues()
+  const updates = [
+    [devueltoIdx + 1, true],
+    [emailDevolucionIdx + 1, email],
+    [fechaDevolucionIdx + 1, new Date()],
+    [estadoDevolucionIdx + 1, data['Estado del equipo al momento de la devolución (D)']],
+    [causaProblemaIdx + 1, data['Causa del problema o no funcionamiento? (D)']]
+  ];
+  
+  updates.forEach(([colIdx, value]) => {
+    sheetPData[rowIndex][colIdx - 1] = value;
+  });
+  
+  // Single batch write to Préstamo sheet
+  const rowNum = rowIndex + 1;
+  const rangesToUpdate = updates.map(([colIdx]) => colIdx);
+  const minCol = Math.min(...rangesToUpdate);
+  const maxCol = Math.max(...rangesToUpdate);
+  const valuesToWrite = new Array(maxCol - minCol + 1).fill(null);
+  
+  updates.forEach(([colIdx, value]) => {
+    valuesToWrite[colIdx - minCol] = value;
+  });
+  
+  sheetP.getRange(rowNum, minCol, 1, valuesToWrite.length).setValues([valuesToWrite]);
+  
+  // Handle Disponibilidad sheet
+  const disponibilidadSheet = ss.getSheetByName('Disponibilidad');
+  
+  if (disponibilidadSheet) {
+    // Get values from already loaded data instead of reading from sheet again
+    const cualControlHDMIStr = sheetPData[rowIndex][cualControlHDMIIdx] || '';
+    const cualPortatilStr = sheetPData[rowIndex][cualPortatilIdx] || '';
+    const cualOtroStr = sheetPData[rowIndex][cualOtroIdx] || '';
+    
+    // Combine and filter items
+    const items = [
+      ...cualControlHDMIStr.split(','),
+      ...cualPortatilStr.split(','),
+      ...cualOtroStr.split(',')
+    ]
+      .map(item => String(item).trim())
+      .filter(item => item !== '');
+    
+    if (items.length > 0) {
+      const disponibilidadData = disponibilidadSheet.getDataRange().getValues();
+      const disponibilidadHeaders = disponibilidadData[0];
+      const nombreColumnIndex = disponibilidadHeaders.indexOf('NOMBRE');
+      const disponibleColumnIndex = disponibilidadHeaders.indexOf('DISPONIBLE');
+      
+      // Create a map for faster lookups
+      const nombreToRowMap = new Map();
+      disponibilidadData.forEach((row, idx) => {
+        if (idx > 0) { // Skip header
+          nombreToRowMap.set(String(row[nombreColumnIndex]).trim(), idx);
+        }
+      });
+      
+      // Batch update disponibilidad
+      const dispUpdates = [];
+      items.forEach(item => {
+        const rowIdx = nombreToRowMap.get(item);
+        if (rowIdx !== undefined) {
+          dispUpdates.push(rowIdx + 1);
+        }
+      });
+      
+      // Write all disponibilidad updates at once
+      dispUpdates.forEach(rowIdx => {
+        disponibilidadSheet.getRange(rowIdx, disponibleColumnIndex + 1).setValue(true);
+      });
+    }
+  }
 }
 
 function getDeviceOptions() {
@@ -239,6 +362,7 @@ function getDeviceOptions() {
   const tipoIdx = headers.indexOf("TIPO");
   const disponibleIdx = headers.indexOf("DISPONIBLE");
   const activoIdx = headers.indexOf("ACTIVO");
+  const sedeIdx = headers.indexOf("SEDE");
 
   const result = {
     hdmi: [],
@@ -257,10 +381,12 @@ function getDeviceOptions() {
     const nombre = row[nombreIdx];
     const tipo = row[tipoIdx];
     const disponible = row[disponibleIdx];
+    const sede = row[sedeIdx];
 
     const option = {
       value: nombre,
-      disabled: disponible !== true
+      disabled: disponible !== true,
+      sede: sede,
     };
 
     switch (tipo) {
@@ -339,6 +465,63 @@ function getPlaceOptions() {
         break;
       case "Centro":
         result.Centro.push({ value: nombre });
+        break;
+    }
+  }
+  return result;
+}
+
+function getNotReturnedDevicesBySolicitante() {
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Préstamo");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const sedeIdx = headers.indexOf('Sede (P)');
+  const solicitanteIdx = headers.indexOf('Nombre del solicitante (P)');
+  const tipoSolicitanteIdx = headers.indexOf('Tipo de solicitante (P)');
+  const controlIdx = headers.indexOf('Cuál control HDMI? (P)');
+  const portatilIdx = headers.indexOf('Cuál portátil? (P)');
+  const otroIdx = headers.indexOf('Cuál otro? (P)');
+  const devueltoIdx = headers.indexOf('DEVUELTO');
+
+  const result = {
+    Torobajo: [],
+    Centro: [],
+  };
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const devuelto = row[devueltoIdx];
+
+    if (devuelto === true) {
+      continue; // Skip items that are returned
+    }
+    const sede = row[sedeIdx];
+    const solicitante = row[solicitanteIdx];
+    const tipoSolicitante = row[tipoSolicitanteIdx];
+    const control = row[controlIdx];
+    const portatil = row[portatilIdx];
+    const otro = row[otroIdx];
+    
+    switch(sede){
+      case "Torobajo":
+        result.Torobajo.push({
+          solicitante,
+          tipoSolicitante,
+          control,
+          portatil,
+          otro
+        });
+        break;
+      case "Centro":
+        result.Centro.push({
+          solicitante,
+          tipoSolicitante,
+          control,
+          portatil,
+          otro
+        });
         break;
     }
   }

@@ -261,7 +261,7 @@
           <button type="button" class="btn btn-primary" onclick="goToSection('PréstamoSection')">Préstamo</button>
           <button type="button" class="btn btn-primary" onclick="goToSection('DevoluciónSection')">Devolución</button>
           <button type="button" class="btn btn-primary" onclick="goToSection('SoporteSection')">Soporte</button>
-          <button type="button" class="btn btn-primary" onclick="goToSection('BajaDeActivosSection')">Baja de activos</button>
+          <!-- <button type="button" class="btn btn-primary" onclick="goToSection('BajaDeActivosSection')">Baja de activos</button> -->
           <button type="button" class="btn btn-primary" onclick="goToSection('InformaciónSection')">Información</button>
         </div>
       </div>
@@ -463,25 +463,6 @@
       <form id="Préstamo" onsubmit="handleSubmit(event)">
 
         <div class="card shadow-sm p-4 mb-4">
-          <label class="form-label fw-semibold">
-            Sede<span class="text-danger">*</span>
-          </label>
-          <div class="d-grid gap-3">
-
-            <input type="radio" class="btn-check" name="Sede (P)" id="p_s_Torobajo" value="Torobajo" required>
-            <label class="btn btn-outline-primary text-start w-100" for="p_s_Torobajo">
-              Torobajo
-            </label>
-          
-            <input type="radio" class="btn-check" name="Sede (P)" id="p_s_Centro" value="Centro" required>
-            <label class="btn btn-outline-primary text-start w-100" for="p_s_Centro">
-              Centro
-            </label>
-          
-          </div>
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
           <label for="p_nds" class="form-label fw-semibold">
             Nombre del solicitante<span class="text-danger">*</span>
           </label>
@@ -524,28 +505,87 @@
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
-          <label for="p_chdmi" class="form-label fw-semibold text-primary">
+          <label class="form-label fw-semibold">
+            Sede<span class="text-danger">*</span>
+          </label>
+          <div class="d-grid gap-3">
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (P)"
+              id="p_s_Torobajo"
+              value="Torobajo"
+              data-toggle-target="#p_chdmi_Torobajo_card, #p_cportatil_Torobajo_card, #p_cotro_Torobajo_card"
+              data-toggle-value="Torobajo"
+              required
+            >
+            <label class="btn btn-outline-primary text-start w-100" for="p_s_Torobajo">
+              Torobajo
+            </label>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (P)"
+              id="p_s_Centro"
+              value="Centro"
+              data-toggle-target="#p_chdmi_Centro_card, #p_cportatil_Centro_card, #p_cotro_Centro_card"
+              data-toggle-value="Centro"
+              required
+            >
+            <label class="btn btn-outline-primary text-start w-100" for="p_s_Centro">
+              Centro
+            </label>
+          
+          </div>
+        </div>
+
+        <div id="p_chdmi_Torobajo_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_chdmi_Torobajo" class="form-label fw-semibold text-primary">
             Cuál control HDMI?
           </label>
-          <select id="p_chdmi" name="Cuál control HDMI? (P)" class="form-select shadow-sm border rounded-3">
-            <option value="" selected>Selecciona una opción</option>
+          <select id="p_chdmi_Torobajo" name="Cuál control HDMI? (P)" class="form-select shadow-sm border rounded-3" multiple  required="false">
           </select>
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="p_cportatil" class="form-label fw-semibold text-primary">
+        <div id="p_cportatil_Torobajo_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_cportatil_Torobajo" class="form-label fw-semibold text-primary">
             Cuál portátil?
           </label>
-          <select id="p_cportatil" name="Cuál portátil? (P)" class="form-select shadow-sm border rounded-3">
-            <option value="" selected>Selecciona una opción</option>
+          <select id="p_cportatil_Torobajo" name="Cuál portátil? (P)" class="form-select shadow-sm border rounded-3" multiple required="false">
           </select>
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="p_cotro" class="form-label fw-semibold text-primary">
+        <div id="p_cotro_Torobajo_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_cotro_Torobajo" class="form-label fw-semibold text-primary">
             Cuál otro?
           </label>
-          <select id="p_cotro" name="Cuál otro? (P)" class="form-select shadow-sm border rounded-3" multiple>
+          <select id="p_cotro_Torobajo" name="Cuál otro? (P)" class="form-select shadow-sm border rounded-3" multiple required="false">
+          </select>
+        </div>
+
+        <div id="p_chdmi_Centro_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_chdmi_Centro" class="form-label fw-semibold text-primary">
+            Cuál control HDMI?
+          </label>
+          <select id="p_chdmi_Centro" name="Cuál control HDMI? (P)" class="form-select shadow-sm border rounded-3" multiple required="false">
+          </select>
+        </div>
+
+        <div id="p_cportatil_Centro_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_cportatil_Centro" class="form-label fw-semibold text-primary">
+            Cuál portátil?
+          </label>
+          <select id="p_cportatil_Centro" name="Cuál portátil? (P)" class="form-select shadow-sm border rounded-3" multiple required="false">
+          </select>
+        </div>
+
+        <div id="p_cotro_Centro_card" data-controlled-by="Sede (P)" class="card shadow-sm p-4 mb-4">
+          <label for="p_cotro_Centro" class="form-label fw-semibold text-primary">
+            Cuál otro?
+          </label>
+          <select id="p_cotro_Centro" name="Cuál otro? (P)" class="form-select shadow-sm border rounded-3" multiple required="false">
           </select>
         </div>
 
@@ -554,7 +594,7 @@
           <button id="submit-button" class="btn btn-primary" type="submit">Enviar</button>
         </div>
       </form>
-      </div>
+    </div>
 
     <!-- DEVOLUCIÓNSECTION -->
     <div class="section container" id="DevoluciónSection">
@@ -565,45 +605,59 @@
           <label class="form-label fw-semibold">
             Sede<span class="text-danger">*</span>
           </label>
+          
           <div class="d-grid gap-3">
 
-            <input type="radio" class="btn-check" name="Sede (D)" id="d_s_Torobajo" value="Torobajo" required>
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (D)"
+              id="d_s_Torobajo"
+              value="Torobajo"
+              data-toggle-target="#d_sol_Torobajo_card"
+              data-toggle-value="Torobajo"
+              required
+              >
             <label class="btn btn-outline-primary text-start w-100" for="d_s_Torobajo">
               Torobajo
             </label>
-          
-            <input type="radio" class="btn-check" name="Sede (D)" id="d_s_Centro" value="Centro" required>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="Sede (D)"
+              id="d_s_Centro"
+              value="Centro"
+              data-toggle-target="#d_sol_Centro_card"
+              data-toggle-value="Centro"
+              required
+            >
             <label class="btn btn-outline-primary text-start w-100" for="d_s_Centro">
               Centro
             </label>
           
           </div>
+
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="d_chdmi" class="form-label fw-semibold text-primary">
-            Cuál control HDMI?
+        <div id="d_sol_Torobajo_card" data-controlled-by="Sede (D)" class="card shadow-sm p-4 mb-4">
+          <label for="d_sol_Torobajo_select" class="form-label fw-semibold text-primary">
+            Nombre del solicitante<span class="text-danger">*</span>
           </label>
-          <select id="d_chdmi" name="Cuál control HDMI? (D)" class="form-select shadow-sm border rounded-3">
+          <select id="d_sol_Torobajo_select" name="Nombre del solicitante (D)" class="form-select shadow-sm border rounded-3" required>
             <option value="" selected>Selecciona una opción</option>
           </select>
+          <div id="d_devices_Torobajo" class="mt-3"></div>
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="d_cportatil" class="form-label fw-semibold text-primary">
-            Cuál portátil?
+        <div id="d_sol_Centro_card" data-controlled-by="Sede (D)" class="card shadow-sm p-4 mb-4">
+          <label for="d_sol_Centro_select" class="form-label fw-semibold text-primary">
+            Nombre del solicitante<span class="text-danger">*</span>
           </label>
-          <select id="d_cportatil" name="Cuál portátil? (D)" class="form-select shadow-sm border rounded-3">
+          <select id="d_sol_Centro_select" name="Nombre del solicitante (D)" class="form-select shadow-sm border rounded-3" required>
             <option value="" selected>Selecciona una opción</option>
           </select>
-        </div>
-
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="d_cotro" class="form-label fw-semibold text-primary">
-            Cuál otro?
-          </label>
-          <select id="d_cotro" name="Cuál otro? (D)" class="form-select shadow-sm border rounded-3" multiple>
-          </select>
+          <div id="d_devices_Centro" class="mt-3"></div>
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
@@ -612,17 +666,35 @@
           </label>
           <div class="d-grid gap-3">
 
-            <input type="radio" class="btn-check" name="Estado de la devolución (D)" id="d_edld_OK" value="OK" required>
+            <input type="radio" class="btn-check" name="Estado del equipo al momento de la devolución (D)" id="d_edld_OK" value="OK" required>
             <label class="btn btn-outline-primary text-start w-100" for="d_edld_OK">
               OK
             </label>
           
-            <input type="radio" class="btn-check" name="Estado de la devolución (D)" id="d_edld_Defectuoso" value="Defectuoso" required>
-            <label class="btn btn-outline-primary text-start w-100" for="d_edld_Defectuoso">
-              Defectuoso
+            <input
+              type="radio"
+              class="btn-check"
+              name="Estado del equipo al momento de la devolución (D)"
+              id="d_edld_Problemas"
+              value="Con problemas"
+              data-toggle-target="#d_causa_problemas_card"
+              data-toggle-value="Con problemas"
+              required
+            >
+            <label class="btn btn-outline-primary text-start w-100" for="d_edld_Problemas">
+              Con problemas
             </label>
 
-            <input type="radio" class="btn-check" name="Estado de la devolución (D)" id="d_edld_Nofunciona" value="No funciona" required>
+            <input
+              type="radio"
+              class="btn-check"
+              name="Estado del equipo al momento de la devolución (D)"
+              id="d_edld_Nofunciona"
+              value="No funciona"
+              data-toggle-target="#d_causa_no_funciona_card"
+              data-toggle-value="No funciona"
+              required
+            >
             <label class="btn btn-outline-primary text-start w-100" for="d_edld_Nofunciona">
               No funciona
             </label>
@@ -631,15 +703,29 @@
           </div>
         </div>
 
-        <div class="card shadow-sm p-4 mb-4">
-          <label for="p_cddonf" class="form-label fw-semibold">
-            Causa de defecto o no funcionamiento?
+        <div id="d_causa_problemas_card" data-controlled-by="Estado de la devolución (D)" class="card shadow-sm p-4 mb-4">
+          <label for="d_causa_problemas" class="form-label fw-semibold">
+            Causa del problema o no funcionamiento?<span class="text-danger">*</span>
           </label>
           <input
             type="text"
-            id="p_cddonf"
-            name="Causa de defecto o no funcionamiento? (D)"
+            id="d_causa_problemas"
+            name="Causa del problema o no funcionamiento? (D)"
             class="form-control shadow-sm border rounded-3"
+            required
+          >
+        </div>
+
+        <div id="d_causa_no_funciona_card" data-controlled-by="Estado de la devolución (D)" class="card shadow-sm p-4 mb-4">
+          <label for="d_causa_no_funciona" class="form-label fw-semibold">
+            Causa del problema o no funcionamiento?<span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            id="d_causa_no_funciona"
+            name="Causa del problema o no funcionamiento? (D)"
+            class="form-control shadow-sm border rounded-3"
+            required
           >
         </div>
 
@@ -729,11 +815,9 @@
     </div>
 
     <!-- BAJADEACTIVOSSECTION -->
-    <div class="section container" id="BajaDeActivosSection">
+    <!-- <div class="section container" id="BajaDeActivosSection">
       <h2 class="text-center text-primary">Baja de activos</h2>
       <form id="Bajadeactivos" onsubmit="handleSubmit(event)">
-
-        <!-- TODO Traer place de inventario como un array -->
 
         <div class="card shadow-sm p-4 mb-4">
           <label class="form-label fw-semibold">
@@ -800,7 +884,7 @@
           <button id="submit-button" class="btn btn-primary" type="submit">Enviar</button>
         </div>
       </form>
-    </div>
+    </div> -->
 
     <!-- INFORMACIÓNSECTION -->
     <div class="section container" id="InformaciónSection">
@@ -862,6 +946,37 @@
         })
       );
 
+      // Add these event listeners after populating the selects
+      document.getElementById('d_sol_Torobajo_select').addEventListener('change', function() {
+        displayDeviceInfo(this, 'd_devices_Torobajo');
+      });
+
+      document.getElementById('d_sol_Centro_select').addEventListener('change', function() {
+        displayDeviceInfo(this, 'd_devices_Centro');
+      });
+
+      function displayDeviceInfo(select, containerId) {
+        const container = document.getElementById(containerId);
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (!selectedOption.value) {
+          container.innerHTML = '';
+          return;
+        }
+        
+        const control = selectedOption.dataset.control;
+        const portatil = selectedOption.dataset.portatil;
+        const otro = selectedOption.dataset.otro;
+        
+        container.innerHTML = `
+          <div class="alert alert-info">
+            <p class="mb-1"><strong>Control:</strong> ${control || 'N/A'}</p>
+            <p class="mb-1"><strong>Portátil:</strong> ${portatil || 'N/A'}</p>
+            <p class="mb-0"><strong>Otro:</strong> ${otro || 'N/A'}</p>
+          </div>
+        `;
+      }
+
       function goToSection(sectionSelected) {
         sections.forEach(sec =>
           sec.classList.toggle('active', sec.id === sectionSelected)
@@ -873,8 +988,11 @@
             break;
 
             case 'PréstamoSection':
-            case 'DevoluciónSection':
               google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
+              break;
+              
+            case 'DevoluciónSection':
+              google.script.run.withSuccessHandler(renderNotReturnedDevicesBySolicitante).getNotReturnedDevicesBySolicitante();
               break;
                 
             case 'SoporteSection':
@@ -896,46 +1014,51 @@
       //--------------------------------------------------------------
       function initConditionalVisibility() {
         const inputs = document.querySelectorAll('[data-toggle-target]');
-
         const groups = {};
-
         inputs.forEach(input => {
           const targetSelector = input.dataset.toggleTarget;
           const expectedValue = input.dataset.toggleValue;
           const name = input.name;
-
           if (!groups[name]) {
             groups[name] = [];
           }
-
           groups[name].push({ input, targetSelector, expectedValue });
         });
-
         Object.entries(groups).forEach(([groupName, groupInputs]) => {
           const allInputs = document.querySelectorAll(`input[name="${groupName}"]`);
-
           const updateGroup = () => {
             groupInputs.forEach(({ targetSelector, expectedValue }) => {
-              const target = document.querySelector(targetSelector);
-
+              // Changed from querySelector to querySelectorAll
+              const targets = document.querySelectorAll(targetSelector);
               const selected = Array.from(allInputs).find(i => i.checked);
               const currentValue = selected?.value;
-
               const isMatch = currentValue === expectedValue;
-
-              if (isMatch) {
-                target?.classList.remove('d-none');
-                target?.querySelectorAll('input, select, textarea').forEach(el => el.required = true);
-              } else {
-                target?.classList.add('d-none');
-                target?.querySelectorAll('input, select, textarea').forEach(el => {
-                  el.required = false;
-                  el.value = '';
-                });
-              }
+              
+              // Loop through all matched targets
+              targets.forEach(target => {
+                if (isMatch) {
+                  target?.classList.remove('d-none');
+                  target?.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.required = true;
+                    document.getElementById('p_chdmi_Torobajo').removeAttribute('required');
+                    document.getElementById('p_cportatil_Torobajo').removeAttribute('required');
+                    document.getElementById('p_cotro_Torobajo').removeAttribute('required');
+                    document.getElementById('p_chdmi_Centro').removeAttribute('required');
+                    document.getElementById('p_cportatil_Centro').removeAttribute('required');
+                    document.getElementById('p_cotro_Centro').removeAttribute('required');
+                    el.disabled = false;
+                  });
+                } else {
+                  target?.classList.add('d-none');
+                  target?.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.required = false;
+                    el.disabled = true;
+                    el.value = '';
+                  });
+                }
+              });
             });
           };
-
           allInputs.forEach(input => input.addEventListener('change', updateGroup));
           updateGroup(); // Run once initially
         });
@@ -949,6 +1072,18 @@
       function handleSubmit(e) {
         e.preventDefault();
 
+        const form = e.target;
+        const multiSelects = form.querySelectorAll('select[multiple]');
+        
+        // Review disabling empty multi-selects, if not necessary then remove this block
+        const disabledSelects = [];
+        multiSelects.forEach(select => {
+          if (select.options.length === 0 && !select.required) {
+            select.disabled = true;
+            disabledSelects.push(select);
+          }
+        });
+
         const spinner = document.getElementById('spinner');
         const submitBtn = document.getElementById('submit-button');
 
@@ -956,7 +1091,6 @@
         spinner.classList.remove('d-none');
         submitBtn.disabled = true;
 
-        const form = e.target;
         const formData = new FormData(form);
         const data = {};
 
@@ -967,11 +1101,9 @@
         data.formId = form.id;
 
         if(form.id === 'Inventario') {
-
           data.URL = createURLParams(form);
-
           const selectedSede = data['Sede (I)'];
-  
+
           // Get the value from the correct select based on the selected sede
           if (selectedSede === 'Torobajo') {
             data['Ubicación ( Oficina - Aula) (I)'] = document.getElementById('i_u_Torobajo').value;
@@ -981,9 +1113,8 @@
         }
 
         if(form.id === 'Soporte') {
-
           const selectedPlaca = data['Tipo de Placa (S)'];
-  
+
           // Get the value from the correct select based on the selected sede
           if (selectedPlaca === 'FUCS') {
             data['Placa Inventario (S)'] = document.getElementById('s_pi_FUCS_select').value;
@@ -992,8 +1123,55 @@
           }
         }
 
+        if(form.id === 'Préstamo') {
+          const selectedSede = data['Sede (P)'];
+
+          // Get the value from the correct select based on the selected sede
+          if (selectedSede === 'Torobajo') {
+            data['Cuál control HDMI? (P)'] = document.getElementById('p_chdmi_Torobajo').value;
+            data['Cuál portátil? (P)'] = document.getElementById('p_cportatil_Torobajo').value;
+            data['Cuál otro? (P)'] = document.getElementById('p_cotro_Torobajo').value;
+          } else if (selectedSede === 'Centro') {
+            data['Cuál control HDMI? (P)'] = document.getElementById('p_chdmi_Centro').value;
+            data['Cuál portátil? (P)'] = document.getElementById('p_cportatil_Centro').value;
+            data['Cuál otro? (P)'] = document.getElementById('p_cotro_Centro').value;
+          }
+        }
+
+        if(form.id === 'Devolución') {
+          const selectedSede = data['Sede (D)'];
+
+          // Get the value from the correct select based on the selected sede
+          if (selectedSede === 'Torobajo') {
+            data['Nombre del solicitante (D)'] = document.getElementById('d_sol_Torobajo_select').value;
+          } else if (selectedSede === 'Centro') {
+            data['Nombre del solicitante (D)'] = document.getElementById('d_sol_Centro_select').value;
+          }
+
+          const selectedEstado = data['Estado del equipo al momento de la devolución (D)'];
+
+          if (selectedEstado === 'No Funciona') {
+            data['Causa del problema o no funcionamiento? (D)'] = document.getElementById('d_causa_no_funciona').value;
+          } else if (selectedEstado === 'Con problemas') {
+            data['Causa del problema o no funcionamiento? (D)'] = document.getElementById('d_causa_problemas').value;
+          }
+        }
+
+        // Process multi-select values (only for enabled selects with options)
+        multiSelects.forEach(select => {
+          if (!select.disabled) {
+            const selectedOptions = Array.from(select.selectedOptions).map(option => option.value);
+            if (selectedOptions.length > 0) {
+              data[select.name] = selectedOptions.join(',');
+            }
+          }
+        });
+
         google.script.run
           .withSuccessHandler(() => {
+            // Re-enable temporarily disabled selects
+            disabledSelects.forEach(select => select.disabled = false);
+            
             alert('Formulario enviado correctamente.');
             spinner.classList.add('d-none');
             submitBtn.disabled = false;
@@ -1001,6 +1179,9 @@
             returnToMenu();
           })
           .withFailureHandler(error => {
+            // Re-enable temporarily disabled selects
+            disabledSelects.forEach(select => select.disabled = false);
+            
             alert('Error: ' + error.message);
             spinner.classList.add('d-none');
             submitBtn.disabled = false;
@@ -1038,16 +1219,27 @@
 
       let placeOptionsLoaded = false;
       let deviceOptionsLoaded = false;
-      let allDevicesByTypeOfPlate= false;
+      let allDevicesByTypeOfPlateLoaded = false;
+      let notReturnedDevicesBySolicitanteLoaded = false;
 
       google.script.run.withSuccessHandler(renderDeviceOptions).getDeviceOptions();
       google.script.run.withSuccessHandler(renderPlaceOptions).getPlaceOptions();
       google.script.run.withSuccessHandler(renderAllDevicesByTypeOfPlate).getAllDevicesByTypeOfPlate();
+      google.script.run.withSuccessHandler(renderNotReturnedDevicesBySolicitante).getNotReturnedDevicesBySolicitante();
 
+      function renderNotReturnedDevicesBySolicitante(data) {
+        populateNotReturnedDevicesBySolicitanteSelect("d_sol_Torobajo_select", data.Torobajo);
+        populateNotReturnedDevicesBySolicitanteSelect("d_sol_Centro_select", data.Centro);
+        notReturnedDevicesBySolicitanteLoaded = true;
+        checkAllLoaded();
+      }
+
+
+      
       function renderAllDevicesByTypeOfPlate(data) {
-        populateAllDevicesByTypeOfPlate("s_pi_FUCS_select", data.FUCS);
-        populateAllDevicesByTypeOfPlate("s_pi_TMS_select", data.TMS);
-        allDevicesByTypeOfPlate = true;
+        populateAllDevicesByTypeOfPlateSelect("s_pi_FUCS_select", data.FUCS);
+        populateAllDevicesByTypeOfPlateSelect("s_pi_TMS_select", data.TMS);
+        allDevicesByTypeOfPlateLoaded = true;
         checkAllLoaded();
       }
       
@@ -1059,18 +1251,18 @@
       }
 
       function renderDeviceOptions(data) {
-        populateDeviceSelect("p_chdmi", data.hdmi, true);
-        populateDeviceSelect("p_cportatil", data.portatil, true);
-        populateDeviceSelect("p_cotro", data.otro, true);
-        populateDeviceSelect("d_chdmi", data.hdmi, false);
-        populateDeviceSelect("d_cportatil", data.portatil, false);
-        populateDeviceSelect("d_cotro", data.otro, false);
+        populateDeviceSelect("p_chdmi_Torobajo", data.hdmi, "Torobajo");
+        populateDeviceSelect("p_cportatil_Torobajo", data.portatil, "Torobajo");
+        populateDeviceSelect("p_cotro_Torobajo", data.otro, "Torobajo");
+        populateDeviceSelect("p_chdmi_Centro", data.hdmi, "Centro");
+        populateDeviceSelect("p_cportatil_Centro", data.portatil, "Centro");
+        populateDeviceSelect("p_cotro_Centro", data.otro, "Centro");
         deviceOptionsLoaded = true;
         checkAllLoaded();
       }
 
       function checkAllLoaded() {
-        if (placeOptionsLoaded && deviceOptionsLoaded && allDevicesByTypeOfPlate) {
+        if (placeOptionsLoaded && deviceOptionsLoaded && allDevicesByTypeOfPlateLoaded && notReturnedDevicesBySolicitanteLoaded) {
           applyPrefill();
           initConditionalVisibility();
         }
@@ -1090,9 +1282,29 @@
             select.appendChild(option);
           });
       }
+
+      function populateNotReturnedDevicesBySolicitanteSelect(selectId, options) {
+        const select = document.getElementById(selectId);
+
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+
+        options.forEach(opt => {
+          const option = document.createElement("option");
+            option.value = opt.solicitante;
+            option.textContent = `${opt.solicitante} - ${opt.tipoSolicitante}`;
+            option.dataset.solicitante = opt.solicitante || '';
+            option.dataset.control = opt.control || '';
+            option.dataset.portatil = opt.portatil || '';
+            option.dataset.otro = opt.otro || '';
+
+            select.appendChild(option);
+          });
+      }
       
       // MAYBE DELETE IT AND USE populatePlaceSelect INSTEAD
-      function populateAllDevicesByTypeOfPlate(selectId, options) {
+      function populateAllDevicesByTypeOfPlateSelect(selectId, options) {
         const select = document.getElementById(selectId);
 
         while (select.options.length > 1) {
@@ -1107,29 +1319,21 @@
           });
       }
       
-      function populateDeviceSelect(selectId, options, isPrestamo) {
+      function populateDeviceSelect(selectId, options, sede) {
         const select = document.getElementById(selectId);
 
-        if (["p_cotro", "d_cotro"].includes(selectId)) {
-          while (select.options.length > 0) {
-            select.remove(0);
-          }
-        } else {
-          while (select.options.length > 1) {
-            select.remove(1);
-          }
+        while (select.options.length > 0) {
+          select.remove(0);
         }
 
         options.forEach(opt => {
           const option = document.createElement("option");
             option.value = opt.value;
             option.textContent = opt.value;
-          if (!opt.disabled && isPrestamo) {
-            select.appendChild(option);
-          } else if (opt.disabled && !isPrestamo){
+          if (opt.sede === sede && !opt.disabled) {
             select.appendChild(option);
           }
-          });
+        });
       }
 
     </script>
